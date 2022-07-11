@@ -9,4 +9,7 @@ public class Publisher {
     private String name;
 
     private List<Book> publishedBooks;
+
+    public Publisher() {
+    }
 }
