@@ -15,7 +15,7 @@ tags:
   - name: "book"
     description: "Everything about your books"
       # externalDocs:
-      # description: "Find out more"l
+    # description: "Find out more"
     # url: "http://swagger.io"
   - name: "store"
     description: "Access to Petstore orders"
@@ -195,7 +195,200 @@ paths:
           description: "Books not found"
 
   /author/{authorId}:
+    get:
+      tags:
+        - "author"
+      summary: "Find author by ID"
+      description: ""
+      operationId: "getAuthorById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "authorId"
+          in: "path"
+          description: "Author ID for finding data by ID"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Author"
+        "404":
+          description: "Author not found"
 
+    put:
+      tags:
+        - "author"
+      summary: "Update an existing author"
+      description: ""
+      operationId: "updateAuthor"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "authorId"
+          description: "Author object that needs to be updated"
+          required: true
+          type: "integer"
+          format: "int64"
+        - in: "body"
+          name: "body"
+          description: "Author object that needs to be added to the store"
+          required: true
+          schema:
+            $ref: "#/definitions/Author"
+      responses:
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Author not found"
+        "405":
+          description: "Validation exception"
+
+    delete:
+      tags:
+        - "author"
+      summary: "Delete author by ID"
+      description: ""
+      operationId: "deleteAuthorById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "authorId"
+          in: "path"
+          description: "Author id to delete"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Author successfully deleted"
+        "404":
+          description: "Author not found"
+
+  /publisher:
+    post:
+      tags:
+        - "publisher"
+      summary: "Add a new publisher to the bookstore"
+      description: ""
+      operationId: "addPublisher"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Publisher object that needs to be added to the store"
+          required: true
+          schema:
+            $ref: "#/definitions/Publisher"
+      responses:
+        "201":
+          description: "Successfully created!"
+        "405":
+          description: "Invalid input"
+
+    get:
+      tags:
+        - "publisher"
+      summary: "Get all publishers"
+      description: ""
+      operationId: "getAllPublishers"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "A list of publishers"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Publisher"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Publishers not found"
+
+  /publisher/{publisherId}:
+    get:
+      tags:
+        - "publisher"
+      summary: "Find publisher by ID"
+      description: ""
+      operationId: "getPublisherById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "publisherId"
+          in: "path"
+          description: "Publisher ID for finding data by ID"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Publisher"
+        "404":
+          description: "Publisher not found"
+
+    put:
+      tags:
+        - "publisher"
+      summary: "Update an existing publisher"
+      description: ""
+      operationId: "updatePublisher"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "publisherId"
+          description: "Publisher object that needs to be updated"
+          required: true
+          type: "integer"
+          format: "int64"
+        - in: "body"
+          name: "body"
+          description: "Publisher object that needs to be added to the store"
+          required: true
+          schema:
+            $ref: "#/definitions/Publisher"
+      responses:
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Publisher not found"
+        "405":
+          description: "Validation exception"
+
+    delete:
+      tags:
+        - "publisher"
+      summary: "Delete publisher by ID"
+      description: ""
+      operationId: "deletePublisherById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "publisherId"
+          in: "path"
+          description: "Publisher id to delete"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Publisher successfully deleted"
+        "404":
+          description: "Publisher not found"
 
 definitions:
   Book:
