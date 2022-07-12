@@ -1,10 +1,14 @@
 package kz.halykacademy.bookstore.entity;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
+@Entity
 public class Book {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Integer price;
@@ -15,9 +19,26 @@ public class Book {
 
     private LocalDate releaseYear;
 
+    @ManyToOne
+    @JoinColumn(name = "publisher_id")
     private Publisher publisher;
 
+    @ManyToMany
     private List<Author> authors;
+
+    public Book() {
+
+    }
+
+    public Book(Long id, Integer price, String name, Integer numberOfPages, LocalDate releaseYear, Publisher publisher, List<Author> authors) {
+        this.id = id;
+        this.price = price;
+        this.name = name;
+        this.numberOfPages = numberOfPages;
+        this.releaseYear = releaseYear;
+        this.publisher = publisher;
+        this.authors = authors;
+    }
 
     public Long getId() {
         return id;
@@ -72,16 +93,6 @@ public class Book {
     }
 
     public void setAuthors(List<Author> authors) {
-        this.authors = authors;
-    }
-
-    public Book(Long id, Integer price, String name, Integer numberOfPages, LocalDate releaseYear, Publisher publisher, List<Author> authors) {
-        this.id = id;
-        this.price = price;
-        this.name = name;
-        this.numberOfPages = numberOfPages;
-        this.releaseYear = releaseYear;
-        this.publisher = publisher;
         this.authors = authors;
     }
 }
