@@ -19,6 +19,11 @@ public class Author {
     private LocalDate dateOfBirth;
 
     @ManyToMany
+    @JoinTable(
+            name = "author_book",
+            joinColumns = @JoinColumn(name = "author_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id")
+    )
     private List<Book> writtenBooks;
 
     public Author() {

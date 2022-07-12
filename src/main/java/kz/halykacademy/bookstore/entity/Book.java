@@ -23,7 +23,7 @@ public class Book {
     @JoinColumn(name = "publisher_id")
     private Publisher publisher;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "writtenBooks")
     private List<Author> authors;
 
     public Book() {
