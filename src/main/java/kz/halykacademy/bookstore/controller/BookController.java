@@ -1,11 +1,15 @@
 package kz.halykacademy.bookstore.controller;
 
+import kz.halykacademy.bookstore.dto.AuthorDto;
+import kz.halykacademy.bookstore.dto.BookDto;
 import kz.halykacademy.bookstore.entity.Book;
 import kz.halykacademy.bookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,13 +23,44 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @PostMapping
-    public @ResponseBody Book save(@RequestBody Book book) {
-        return bookService.save(book);
+    @PostMapping("/")
+    public ResponseEntity<BookDto.Response.Created> save(@Valid @RequestBody BookDto.Request.Create request) {
+        return new ResponseEntity<>(
+                bookService.save(request),
+                HttpStatus.CREATED
+        );
     }
 
-    @GetMapping
-    public @ResponseBody List<Book> findAllBooks() {
-        return bookService.findAll();
+    @GetMapping("/{id}")
+    public ResponseEntity<BookDto.Response.All> getBook(@PathVariable Long id) {
+        return new ResponseEntity<>(
+                bookService.find(id),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<BookDto.Response.All>> getBooks(@RequestParam(defaultValue = "") String name) {
+        return new ResponseEntity<>(
+                bookService.findAll(name),
+                HttpStatus.OK
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BookDto.Response.Slim> updateBook(@PathVariable Long id, @Valid @RequestBody BookDto.Request.Update request) {
+        return new ResponseEntity<>(
+                bookService.update(id, request),
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBook(@PathVariable Long id) {
+        bookService.delete(id);
+        return new ResponseEntity<>(
+                "Book deleted. id: " + id,
+                HttpStatus.OK
+        );
     }
 }
