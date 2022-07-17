@@ -1,12 +1,21 @@
 package kz.halykacademy.bookstore.service;
 
-import kz.halykacademy.bookstore.entity.Book;
+import kz.halykacademy.bookstore.dto.BookDto.*;
 
 import java.util.List;
 
+/**
+ * Service for working with Book.
+ */
 public interface BookService {
 
-    Book save(Book payload);
+    Response.Created save(Request.Create request);
 
-    List<Book> findAll();
+    Response.Slim update(Long id, Request.Update request);
+
+    Response.All find(Long id);
+
+    List<Response.All> findAll(String name);
+
+    void delete(Long id);
 }
