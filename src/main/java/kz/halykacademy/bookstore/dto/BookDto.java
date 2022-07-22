@@ -1,49 +1,23 @@
 package kz.halykacademy.bookstore.dto;
 
-import kz.halykacademy.bookstore.entity.Author;
 import lombok.Value;
 
 import javax.validation.constraints.Positive;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public enum BookDto {
     ;
-
-    private interface Id {
-        @Positive Long getId();
-    }
-
-    private interface Price {
-        @Positive Integer getPrice();
-    }
-
-    private interface Name {
-        String getName();
-    }
-
-    private interface NumberOfPages {
-        @Positive Integer getNumberOfPages();
-    }
-
-    private interface ReleaseYear {
-        Date getReleaseYear();
-    }
-
-    private interface Authors {
-        List<AuthorDto.Response.Slim> getAuthors();
-    }
-
 
     public enum Request {
         ;
 
         @Value
-        public static class Create implements Price, Name, NumberOfPages, ReleaseYear {
+        public static class Create implements Price, Name, NumberOfPages, ReleaseYear, AuthorId {
             Integer price;
             String name;
             Integer numberOfPages;
             Date releaseYear;
+            Long[] authorId;
         }
 
         @Value
@@ -74,7 +48,7 @@ public enum BookDto {
             String name;
             Integer numberOfPages;
             Date releaseYear;
-            List<AuthorDto.Response.Slim> authors;
+            Set<AuthorDto.Response.Slim> authors;
         }
 
         @Value
@@ -83,5 +57,42 @@ public enum BookDto {
             String name;
         }
     }
+
+    private interface Id {
+        @Positive Long getId();
+    }
+
+    private interface Price {
+        @Positive Integer getPrice();
+    }
+
+    private interface Name {
+        String getName();
+    }
+
+    private interface NumberOfPages {
+        @Positive Integer getNumberOfPages();
+    }
+
+    private interface ReleaseYear {
+        Date getReleaseYear();
+    }
+
+    private interface Authors {
+        Set<AuthorDto.Response.Slim> getAuthors();
+    }
+
+//    private interface AuthorsRequest {
+//        List<AuthorDto.Request.Create> getAuthors();
+//    }
+//
+//    private interface AuthorsEntity {
+//        List<Author> getAuthors();
+//    }
+
+    private interface AuthorId {
+        @Positive Long[] getAuthorId();
+    }
+
 
 }

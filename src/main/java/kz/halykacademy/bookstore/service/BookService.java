@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface BookService {
 
-    Response.Created save(Request.Create request);
+    Response.All save(Request.Create request);
 
     Response.Slim update(Long id, Request.Update request);
 
@@ -17,5 +17,5 @@ public interface BookService {
 
     List<Response.All> findAll(String name);
 
-    void delete(Long id);
+    void delete(Long Id);
 }

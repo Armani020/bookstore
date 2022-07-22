@@ -1,7 +1,9 @@
 package kz.halykacademy.bookstore.repository;
 
 import kz.halykacademy.bookstore.entity.Author;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -13,15 +15,11 @@ import java.util.List;
 @Repository
 public interface AuthorRepository extends CrudRepository<Author, Long> {
 
-    List<Author> findAuthorsBySurnameContainingIgnoreCaseAndNameContainingIgnoreCaseAndPatronymicContainingIgnoreCase(
-            String surname, String name, String patronymic
-    );
-
-    default List<Author> findByFullName(String surname, String name, String patronymic) {
-        return findAuthorsBySurnameContainingIgnoreCaseAndNameContainingIgnoreCaseAndPatronymicContainingIgnoreCase(
-                surname, name, patronymic
-        );
-    }
+    @Query("SELECT u FROM Author u WHERE " +
+            "(LOWER(concat(u.surname, ' ', u.name, ' ', u.patronymic)) LIKE LOWER(concat('%', :fullName, '%'))) OR " +
+            "(LOWER(concat(u.name, ' ', u.surname)) LIKE LOWER(concat('%', :fullName, '%'))) OR " +
+            "(LOWER(concat(u.surname, ' ', u.name)) LIKE LOWER(concat('%', :fullName, '%')))")
+    List<Author> findByFullName(@Param("fullName") String fullName);
 
     boolean existsBySurnameAndNameAndPatronymicAndDateOfBirth(
             String surname,

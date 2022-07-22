@@ -24,7 +24,7 @@ public class BookController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<BookDto.Response.Created> save(@Valid @RequestBody BookDto.Request.Create request) {
+    public ResponseEntity<BookDto.Response.All> save(@Valid @RequestBody BookDto.Request.Create request) {
         return new ResponseEntity<>(
                 bookService.save(request),
                 HttpStatus.CREATED

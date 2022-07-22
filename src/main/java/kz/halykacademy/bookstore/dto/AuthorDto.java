@@ -1,6 +1,8 @@
 package kz.halykacademy.bookstore.dto;
 
+import kz.halykacademy.bookstore.entity.Book;
 import lombok.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.validation.constraints.Positive;
 import java.util.Date;
@@ -8,30 +10,6 @@ import java.util.List;
 
 public enum AuthorDto {
     ;
-
-    private interface Id {
-        @Positive Long getId();
-    }
-
-    private interface Surname {
-        String getSurname();
-    }
-
-    private interface Name {
-        String getName();
-    }
-
-    private interface Patronymic {
-        String getPatronymic();
-    }
-
-    private interface DateOfBirth {
-        Date getDateOfBirth();
-    }
-
-    private interface Books {
-        List<BookDto.Response.Slim> getBooks();
-    }
 
     public enum Request {
         ;
@@ -83,5 +61,33 @@ public enum AuthorDto {
             String patronymic;
             Date dateOfBirth;
         }
+    }
+
+    private interface Id {
+        @Positive Long getId();
+    }
+
+    private interface Surname {
+        String getSurname();
+    }
+
+    private interface Name {
+        String getName();
+    }
+
+    private interface Patronymic {
+        String getPatronymic();
+    }
+
+    private interface DateOfBirth {
+        Date getDateOfBirth();
+    }
+
+    private interface Books {
+        List<BookDto.Response.Slim> getBooks();
+    }
+
+    private interface BooksEntity {
+        List<Book> getBooks();
     }
 }

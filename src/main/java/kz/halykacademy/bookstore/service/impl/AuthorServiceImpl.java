@@ -8,6 +8,7 @@ import kz.halykacademy.bookstore.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -28,6 +29,8 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Response.Created save(final Request.Create request) {
+        Author author = mapper.toAuthor(request);
+        author.setBooks(new HashSet<>());
         if (authorRepository.existsBySurnameAndNameAndPatronymicAndDateOfBirth(
                 request.getSurname(),
                 request.getName(),
@@ -36,24 +39,26 @@ public class AuthorServiceImpl implements AuthorService {
         ) {
             throw new IllegalArgumentException("Author with this data already exists: " + request);
         }
-        return mapper.authorToAuthorDtoResponseCreated(
-                authorRepository.save(mapper.authorDtoRequestCreateToAuthor(request))
+        return mapper.toAuthorDtoResponseCreated(
+                authorRepository.save(mapper.toAuthor(request))
         );
     }
 
     @Override
     public Response.Slim update(final Long id, final Request.Update request) {
-        if (!authorRepository.existsById(id)) {
-            throw new IllegalArgumentException("Author not found. id: " + id);
-        }
-        Author authorToDb = mapper.authorDtoRequestUpdateToAuthor(request);
-        authorToDb.setId(id);
-        return mapper.authorToAuthorDtoResponseSlim(authorRepository.save(authorToDb));
+        Author authorFromDb = authorRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("Author not found. id: " + id)
+        );
+        authorFromDb.setName(request.getName());
+        authorFromDb.setSurname(request.getSurname());
+        authorFromDb.setPatronymic(request.getPatronymic());
+        authorFromDb.setDateOfBirth(request.getDateOfBirth());
+        return mapper.toAuthorDtoResponseSlim(authorRepository.save(authorFromDb));
     }
 
     @Override
     public Response.Slim find(final Long id) {
-        return mapper.authorToAuthorDtoResponseSlim(
+        return mapper.toAuthorDtoResponseSlim(
                 authorRepository.findById(id).orElseThrow(
                         () -> new IllegalArgumentException("Author not found. id: " + id)
                 )
@@ -61,9 +66,9 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<Response.All> findAll(final String surname, final String name, final String patronymic) {
-        return mapper.authorsToAuthorDtoResponseAll(
-                authorRepository.findByFullName(surname, name, patronymic)
+    public List<Response.All> findAll(final String fullName) {
+        return mapper.toAuthorDtoResponseAll(
+                authorRepository.findByFullName(fullName)
         );
     }
 

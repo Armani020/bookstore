@@ -1,36 +1,54 @@
 package kz.halykacademy.bookstore.service.impl;
 
 import kz.halykacademy.bookstore.dto.BookDto.*;
+import kz.halykacademy.bookstore.entity.Author;
 import kz.halykacademy.bookstore.entity.Book;
 import kz.halykacademy.bookstore.mapper.MapStructMapper;
+import kz.halykacademy.bookstore.repository.AuthorRepository;
 import kz.halykacademy.bookstore.repository.BookRepository;
 import kz.halykacademy.bookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
 public class BookServiceImpl implements BookService {
+
+    private final AuthorRepository authorRepository;
 
     private final BookRepository bookRepository;
 
     private final MapStructMapper mapper;
 
     @Autowired
-    public BookServiceImpl(BookRepository bookRepository, MapStructMapper mapper) {
+    public BookServiceImpl(AuthorRepository authorRepository, BookRepository bookRepository, MapStructMapper mapper) {
+        this.authorRepository = authorRepository;
         this.bookRepository = bookRepository;
         this.mapper = mapper;
     }
 
     @Override
-    public Response.Created save(final Request.Create request) {
-        if (bookRepository.existsByName(request.getName())) {
-            throw new IllegalArgumentException("Book with this data already exists: " + request);
+    public Response.All save(final Request.Create request) {
+
+        Book book = mapper.toBook(request);
+        book.setAuthors(new HashSet<>());
+
+
+        for (Long id : request.getAuthorId()) {
+            Author authorFromDb = authorRepository.findById(id).orElseThrow(
+                    () -> new IllegalArgumentException("Author not found. id: " + id)
+            );
+            book.getAuthors().add(authorFromDb);
         }
-        return mapper.bookToBookDtoResponseCreated(
-                bookRepository.save(mapper.bookDtoRequestCreateToBook(request))
-        );
+
+//        Book bookToDb = authorRepository.findById(request.getAuthorId()).map(author -> {
+//            author.addBook(book);
+//            return bookRepository.save(book);
+//        }).orElseThrow(() -> new IllegalArgumentException("Author not found. id: " + request.getAuthorId()));
+
+        return mapper.toBookDtoResponseAll(bookRepository.save(book));
     }
 
     @Override
@@ -38,14 +56,14 @@ public class BookServiceImpl implements BookService {
         if (!bookRepository.existsById(id)) {
             throw new IllegalArgumentException("Book not found. id: " + id);
         }
-        Book bookToDb = mapper.bookDtoRequestUpdateToBook(request);
+        Book bookToDb = mapper.toBook(request);
         bookToDb.setId(id);
-        return mapper.bookToBookDtoResponseSlim(bookRepository.save(bookToDb));
+        return mapper.toBookDtoResponseSlim(bookRepository.save(bookToDb));
     }
 
     @Override
     public Response.All find(final Long id) {
-        return mapper.bookToBookDtoResponseAll(
+        return mapper.toBookDtoResponseAll(
                 bookRepository.findById(id).orElseThrow(
                         () -> new IllegalArgumentException("Book not found. id: " + id)
                 )
@@ -54,7 +72,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Response.All> findAll(final String name) {
-        return mapper.booksToBookDtoResponseAll(
+        return mapper.toBookDtoResponseAll(
                 bookRepository.findBookByNameContainingIgnoreCase(name)
         );
     }
