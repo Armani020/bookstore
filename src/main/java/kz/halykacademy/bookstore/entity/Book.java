@@ -1,6 +1,8 @@
 package kz.halykacademy.bookstore.entity;
 
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -27,9 +29,9 @@ public class Book {
 
     private Date releaseYear;
 
-    @ManyToOne
-    @JoinColumn(name = "publisher_id")
-    private Publisher publisher;
+//    @ManyToOne
+//    @JoinColumn(name = "publisher_id")
+//    private Publisher publisher;
 
     @ManyToMany(
             cascade = {

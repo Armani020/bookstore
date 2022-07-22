@@ -35,18 +35,12 @@ public class BookServiceImpl implements BookService {
         Book book = mapper.toBook(request);
         book.setAuthors(new HashSet<>());
 
-
         for (Long id : request.getAuthorId()) {
             Author authorFromDb = authorRepository.findById(id).orElseThrow(
                     () -> new IllegalArgumentException("Author not found. id: " + id)
             );
             book.getAuthors().add(authorFromDb);
         }
-
-//        Book bookToDb = authorRepository.findById(request.getAuthorId()).map(author -> {
-//            author.addBook(book);
-//            return bookRepository.save(book);
-//        }).orElseThrow(() -> new IllegalArgumentException("Author not found. id: " + request.getAuthorId()));
 
         return mapper.toBookDtoResponseAll(bookRepository.save(book));
     }
@@ -75,6 +69,18 @@ public class BookServiceImpl implements BookService {
         return mapper.toBookDtoResponseAll(
                 bookRepository.findBookByNameContainingIgnoreCase(name)
         );
+    }
+
+    @Override
+    public void deleteAuthorFromBook(final Long bookId, final Long authorId) {
+        Book book = bookRepository.findById(bookId).orElseThrow(
+                () -> new IllegalArgumentException("Book not found. id: " + bookId)
+        );
+        Author author = authorRepository.findById(authorId).orElseThrow(
+                () -> new IllegalArgumentException("Author not found. id: " + authorId)
+        );
+        book.getAuthors().remove(author);
+        bookRepository.save(book);
     }
 
     @Override

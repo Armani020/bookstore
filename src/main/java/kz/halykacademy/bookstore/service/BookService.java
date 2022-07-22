@@ -17,5 +17,7 @@ public interface BookService {
 
     List<Response.All> findAll(String name);
 
+    void deleteAuthorFromBook(Long bookId, Long authorId);
+
     void delete(Long Id);
 }

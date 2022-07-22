@@ -1,7 +1,5 @@
 package kz.halykacademy.bookstore.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Value;
 
 import javax.validation.constraints.Positive;
@@ -13,10 +11,21 @@ public enum PublisherDto {
     public enum Request {
         ;
 
-        @Value
-        @AllArgsConstructor
+        //        @Data
         public static class Create implements Name {
             String name;
+
+            public Create(String name) {
+                this.name = name;
+            }
+
+            public Create() {
+            }
+
+            @Override
+            public String getName() {
+                return this.name;
+            }
         }
 
         @Value

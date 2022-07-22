@@ -23,7 +23,7 @@ public class PublisherController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<PublisherDto.Response.Created> save(@Valid @RequestBody PublisherDto.Request.Create request) {
+    public ResponseEntity<PublisherDto.Response.Created> createPublisher(@Valid @RequestBody Request.Create request) {
         return new ResponseEntity<>(
                 publisherService.save(request),
                 HttpStatus.CREATED
