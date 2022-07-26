@@ -32,15 +32,15 @@ public class AuthorServiceImpl implements AuthorService {
         Author author = mapper.toAuthor(request);
         author.setBooks(new HashSet<>());
         if (authorRepository.existsBySurnameAndNameAndPatronymicAndDateOfBirth(
-                request.getSurname(),
-                request.getName(),
-                request.getPatronymic(),
-                request.getDateOfBirth())
+                author.getSurname(),
+                author.getName(),
+                author.getPatronymic(),
+                author.getDateOfBirth())
         ) {
             throw new IllegalArgumentException("Author with this data already exists: " + request);
         }
         return mapper.toAuthorDtoResponseCreated(
-                authorRepository.save(mapper.toAuthor(request))
+                authorRepository.save(author)
         );
     }
 
@@ -57,8 +57,8 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Response.Slim find(final Long id) {
-        return mapper.toAuthorDtoResponseSlim(
+    public Response.All find(final Long id) {
+        return mapper.toAuthorDtoResponseAll(
                 authorRepository.findById(id).orElseThrow(
                         () -> new IllegalArgumentException("Author not found. id: " + id)
                 )
@@ -74,6 +74,9 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public void delete(final Long id) {
+        if (!authorRepository.existsById(id)) {
+            throw new IllegalArgumentException("Author doesn't exists. ID: " + id);
+        }
         authorRepository.deleteById(id);
     }
 }

@@ -5,7 +5,7 @@ import lombok.Value;
 import javax.validation.constraints.Positive;
 import java.util.Set;
 
-public enum PublisherDto {
+public enum GenreDto {
     ;
 
     public enum Request {

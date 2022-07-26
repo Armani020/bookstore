@@ -40,9 +40,12 @@ public class BookController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<BookDto.Response.All>> getBooks(@RequestParam(defaultValue = "") String name) {
+    public ResponseEntity<List<BookDto.Response.All>> getBooks(
+            @RequestParam(defaultValue = "") String name,
+            @RequestParam(defaultValue = "null") String genres
+    ) {
         return new ResponseEntity<>(
-                bookService.findAll(name),
+                bookService.findAll(name, genres),
                 HttpStatus.OK
         );
     }
@@ -55,7 +58,7 @@ public class BookController {
         );
     }
 
-    @DeleteMapping("/book/{bookId}/authors/{authorId}")
+    @DeleteMapping("/{bookId}/authors/{authorId}")
     public ResponseEntity<?> deleteAuthorsFromBook(@PathVariable Long bookId, @PathVariable Long authorId) {
         bookService.deleteAuthorFromBook(bookId, authorId);
         return new ResponseEntity<>(

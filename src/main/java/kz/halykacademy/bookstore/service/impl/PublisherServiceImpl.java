@@ -9,6 +9,7 @@ import kz.halykacademy.bookstore.service.PublisherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class PublisherServiceImpl implements PublisherService {
             throw new IllegalArgumentException("Publisher already exists. name: " + request.getName());
         }
         Publisher publisher = mapper.toPublisher(request);
-//        publisher.setPublishedBooks(new HashSet<>());
+        publisher.setBooks(new ArrayList<>());
         return mapper.toPublisherDtoResponseCreated(
                 publisherRepository.save(publisher)
         );
@@ -39,12 +40,11 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     public Response.Slim update(final Long id, final Request.Update request) {
-        if (!publisherRepository.existsById(id)) {
-            throw new IllegalArgumentException("Publisher not found. id: " + id);
-        }
-        Publisher publisherToDb = mapper.toPublisher(request);
-        publisherToDb.setId(id);
-        return mapper.toPublisherDtoResponseSlim(publisherRepository.save(publisherToDb));
+        Publisher publisherFromDb = publisherRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("Publisher not found. ID: " + id)
+        );
+        publisherFromDb.setName(request.getName());
+        return mapper.toPublisherDtoResponseSlim(publisherRepository.save(publisherFromDb));
     }
 
     @Override

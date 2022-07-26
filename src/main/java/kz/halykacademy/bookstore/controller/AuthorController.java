@@ -30,7 +30,7 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AuthorDto.Response.Slim> getAuthor(@PathVariable Long id) {
+    public ResponseEntity<AuthorDto.Response.All> getAuthor(@PathVariable Long id) {
         return new ResponseEntity<>(
                 authorService.find(id),
                 HttpStatus.OK

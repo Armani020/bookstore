@@ -1,6 +1,5 @@
 package kz.halykacademy.bookstore.controller;
 
-import kz.halykacademy.bookstore.dto.PublisherDto;
 import kz.halykacademy.bookstore.dto.PublisherDto.*;
 import kz.halykacademy.bookstore.service.PublisherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class PublisherController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<PublisherDto.Response.Created> createPublisher(@Valid @RequestBody Request.Create request) {
+    public ResponseEntity<Response.Created> createPublisher(@Valid @RequestBody Request.Create request) {
         return new ResponseEntity<>(
                 publisherService.save(request),
                 HttpStatus.CREATED

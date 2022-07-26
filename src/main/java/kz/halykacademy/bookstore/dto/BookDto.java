@@ -12,12 +12,13 @@ public enum BookDto {
         ;
 
         @Value
-        public static class Create implements Price, Name, NumberOfPages, ReleaseYear, AuthorId {
+        public static class Create implements Price, Name, NumberOfPages, ReleaseYear, AuthorIdList, PublisherId {
             Integer price;
             String name;
             Integer numberOfPages;
             Date releaseYear;
-            Long[] authorId;
+            List<AuthorIds> authorIds;
+            Long publisherId;
         }
 
         @Value
@@ -27,6 +28,23 @@ public enum BookDto {
             Integer numberOfPages;
             Date releaseYear;
         }
+
+        public static class AuthorIds implements Id {
+            Long id;
+
+            public AuthorIds() {
+            }
+
+            public AuthorIds(Long authorId) {
+                this.id = authorId;
+            }
+
+            @Override
+            public Long getId() {
+                return this.id;
+            }
+        }
+
     }
 
     public enum Response {
@@ -42,13 +60,14 @@ public enum BookDto {
         }
 
         @Value
-        public static class All implements Id, Price, Name, NumberOfPages, ReleaseYear, Authors {
+        public static class All implements Id, Price, Name, NumberOfPages, ReleaseYear, Authors, Publisher {
             Long id;
             Integer price;
             String name;
             Integer numberOfPages;
             Date releaseYear;
             Set<AuthorDto.Response.Slim> authors;
+            PublisherDto.Response.Slim publisher;
         }
 
         @Value
@@ -82,17 +101,15 @@ public enum BookDto {
         Set<AuthorDto.Response.Slim> getAuthors();
     }
 
-//    private interface AuthorsRequest {
-//        List<AuthorDto.Request.Create> getAuthors();
-//    }
-//
-//    private interface AuthorsEntity {
-//        List<Author> getAuthors();
-//    }
-
-    private interface AuthorId {
-        @Positive Long[] getAuthorId();
+    private interface Publisher {
+        PublisherDto.Response.Slim getPublisher();
     }
 
+    private interface AuthorIdList {
+        List<Request.AuthorIds> getAuthorIds();
+    }
 
+    private interface PublisherId {
+        @Positive Long getPublisherId();
+    }
 }

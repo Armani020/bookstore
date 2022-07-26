@@ -7,6 +7,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -29,37 +30,48 @@ public class Book {
 
     private Date releaseYear;
 
-//    @ManyToOne
-//    @JoinColumn(name = "publisher_id")
-//    private Publisher publisher;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Publisher publisher;
 
-    @ManyToMany(
-            cascade = {
-                    CascadeType.DETACH,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH,
-                    CascadeType.PERSIST
-            }
-    )
-    @JoinTable(
-            name = "author_book",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "author_id"),
-            foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT),
-            inverseForeignKey = @ForeignKey(ConstraintMode.CONSTRAINT)
-    )
+    @ManyToMany(mappedBy = "books")
     private Set<Author> authors = new HashSet<>();
 
-//    public void addAuthor(Author author) {
-//        this.authors.add(author);
-//        author.getBooks().add(this);
-//    }
-//
-//    public void removeAuthor(Long authorId) {
-//        Author author = this.authors.stream().filter(a -> a.getId() == authorId).findFirst().orElse(null);
-//        if (author != null) {
-//            this.authors.remove(author);
-//            author.getBooks().remove(this);
-//        }
-//    }
+    @ManyToMany(mappedBy = "books")
+    private Set<Genre> genres = new HashSet<>();
+
+    public void addAuthor(Author author) {
+        this.authors.add(author);
+        author.getBooks().add(this);
+    }
+
+    public void removeAuthor(Long authorId) {
+        Author author = this.authors.stream().filter(b -> b.getId().equals(authorId)).findFirst().orElse(null);
+        if (author != null) {
+            this.authors.remove(author);
+            author.getBooks().remove(this);
+        }
+    }
+
+    public void addPublisher(Publisher publisher) {
+        this.setPublisher(publisher);
+        publisher.getBooks().add(this);
+    }
+
+    public void removePublisher(Publisher publisher) {
+        this.setPublisher(null);
+        publisher.getBooks().remove(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return Objects.equals(id, book.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

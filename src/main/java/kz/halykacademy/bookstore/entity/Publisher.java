@@ -3,8 +3,8 @@ package kz.halykacademy.bookstore.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,7 +20,16 @@ public class Publisher {
 
     private String name;
 
-    @OneToMany(orphanRemoval = true)
-    @JoinColumn(name = "publisher_id")
-    private Set<Book> publishedBooks = new HashSet<>();
+    @OneToMany(mappedBy = "publisher"/*, orphanRemoval = true*/)
+    private List<Book> books = new ArrayList<>();
+
+    public void addBook(Book book) {
+        this.books.add(book);
+        book.setPublisher(this);
+    }
+
+    public void removeBook(Book book) {
+        this.books.remove(book);
+        book.setPublisher(null);
+    }
 }

@@ -21,6 +21,12 @@ public interface AuthorRepository extends CrudRepository<Author, Long> {
             "(LOWER(concat(u.surname, ' ', u.name)) LIKE LOWER(concat('%', :fullName, '%')))")
     List<Author> findByFullName(@Param("fullName") String fullName);
 
+    @Query("SELECT author FROM Author author " +
+            "JOIN author.books author_books " +
+            "JOIN author_books.genres g " +
+            "WHERE g.name LIKE :genre")
+    List<Author> findByGenre(@Param("genre") String genre); // where g.name in :genres (List<String>)
+
     boolean existsBySurnameAndNameAndPatronymicAndDateOfBirth(
             String surname,
             String name,

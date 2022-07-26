@@ -2,9 +2,11 @@ package kz.halykacademy.bookstore.mapper;
 
 import kz.halykacademy.bookstore.dto.AuthorDto;
 import kz.halykacademy.bookstore.dto.BookDto;
+import kz.halykacademy.bookstore.dto.GenreDto;
 import kz.halykacademy.bookstore.dto.PublisherDto;
 import kz.halykacademy.bookstore.entity.Author;
 import kz.halykacademy.bookstore.entity.Book;
+import kz.halykacademy.bookstore.entity.Genre;
 import kz.halykacademy.bookstore.entity.Publisher;
 import org.mapstruct.Mapper;
 
@@ -21,6 +23,8 @@ public interface MapStructMapper {
     AuthorDto.Response.Created toAuthorDtoResponseCreated(Author author);
 
     AuthorDto.Response.Slim toAuthorDtoResponseSlim(Author author);
+
+    AuthorDto.Response.All toAuthorDtoResponseAll(Author author);
 
     List<AuthorDto.Response.Slim> toAuthorDtoResponseSlim(List<Author> authors);
 
@@ -58,4 +62,17 @@ public interface MapStructMapper {
 
     Publisher toPublisher(PublisherDto.Request.Update publisherDto);
 
+    GenreDto.Response.Created toGenreDtoResponseCreated(Genre genre);
+
+    GenreDto.Response.Slim toGenreDtoResponseSlim(Genre genre);
+
+    GenreDto.Response.All toGenreDtoResponseAll(Genre genre);
+
+    List<GenreDto.Response.Slim> toGenreDtoResponseSlim(List<Genre> genres);
+
+    List<GenreDto.Response.All> toGenreDtoResponseAll(List<Genre> genres);
+
+    Genre toGenre(GenreDto.Request.Create genreDto);
+
+    Genre toGenre(GenreDto.Request.Update genreDto);
 }
