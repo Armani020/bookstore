@@ -1,9 +1,12 @@
 package kz.halykacademy.bookstore.service.impl;
 
-import kz.halykacademy.bookstore.dto.AuthorDto.*;
+import kz.halykacademy.bookstore.dto.AuthorDto;
+import kz.halykacademy.bookstore.dto.AuthorDto.Request;
+import kz.halykacademy.bookstore.dto.AuthorDto.Response;
 import kz.halykacademy.bookstore.entity.Author;
 import kz.halykacademy.bookstore.mapper.MapStructMapper;
 import kz.halykacademy.bookstore.repository.AuthorRepository;
+import kz.halykacademy.bookstore.repository.GenreRepository;
 import kz.halykacademy.bookstore.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,11 +22,14 @@ public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
 
+    private final GenreRepository genreRepository;
+
     private final MapStructMapper mapper;
 
     @Autowired
-    public AuthorServiceImpl(AuthorRepository authorRepository, MapStructMapper mapper) {
+    public AuthorServiceImpl(AuthorRepository authorRepository, GenreRepository genreRepository, MapStructMapper mapper) {
         this.authorRepository = authorRepository;
+        this.genreRepository = genreRepository;
         this.mapper = mapper;
     }
 
@@ -58,18 +64,21 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Response.All find(final Long id) {
-        return mapper.toAuthorDtoResponseAll(
-                authorRepository.findById(id).orElseThrow(
-                        () -> new IllegalArgumentException("Author not found. id: " + id)
-                )
-        );
+        Author authorFromDb = authorRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("Author not found. id: " + id));
+        AuthorDto.Response.All response = mapper.toAuthorDtoResponseAll(authorFromDb);
+        response.setGenres(mapper.toGenreDtoResponseSlim(genreRepository.findGenresByAuthor(id)));
+        return response;
     }
 
     @Override
     public List<Response.All> findAll(final String fullName) {
-        return mapper.toAuthorDtoResponseAll(
-                authorRepository.findByFullName(fullName)
-        );
+        List<AuthorDto.Response.All> authorsFromDb = mapper.toAuthorDtoResponseAll(
+                authorRepository.findByFullName(fullName));
+        for (AuthorDto.Response.All a : authorsFromDb) {
+            a.setGenres(mapper.toGenreDtoResponseSlim(genreRepository.findGenresByAuthor(a.getId())));
+        }
+        return authorsFromDb;
     }
 
     @Override

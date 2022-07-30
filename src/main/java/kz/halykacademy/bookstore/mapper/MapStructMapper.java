@@ -9,6 +9,7 @@ import kz.halykacademy.bookstore.entity.Book;
 import kz.halykacademy.bookstore.entity.Genre;
 import kz.halykacademy.bookstore.entity.Publisher;
 import org.mapstruct.Mapper;
+import org.mapstruct.NullValueCheckStrategy;
 
 import java.util.List;
 
@@ -16,7 +17,8 @@ import java.util.List;
  * Mapper for converting entities to dto and vise-versa.
  */
 @Mapper(
-        componentModel = "spring"
+        componentModel = "spring",
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS
 )
 public interface MapStructMapper {
 

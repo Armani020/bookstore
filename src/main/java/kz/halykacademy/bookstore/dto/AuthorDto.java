@@ -1,12 +1,13 @@
 package kz.halykacademy.bookstore.dto;
 
 import kz.halykacademy.bookstore.entity.Book;
+import lombok.Data;
 import lombok.Value;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.validation.constraints.Positive;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public enum AuthorDto {
     ;
@@ -19,7 +20,7 @@ public enum AuthorDto {
             String surname;
             String name;
             String patronymic;
-            Date dateOfBirth;
+            LocalDate dateOfBirth;
         }
 
         @Value
@@ -27,7 +28,7 @@ public enum AuthorDto {
             String surname;
             String name;
             String patronymic;
-            Date dateOfBirth;
+            LocalDate dateOfBirth;
         }
     }
 
@@ -40,17 +41,18 @@ public enum AuthorDto {
             String surname;
             String name;
             String patronymic;
-            Date dateOfBirth;
+            LocalDate dateOfBirth;
         }
 
-        @Value
+        @Data
         public static class All implements Id, Surname, Name, Patronymic, DateOfBirth, Books {
             Long id;
             String surname;
             String name;
             String patronymic;
-            Date dateOfBirth;
+            LocalDate dateOfBirth;
             List<BookDto.Response.Slim> books;
+            List<GenreDto.Response.Slim> genres;
         }
 
         @Value
@@ -59,7 +61,7 @@ public enum AuthorDto {
             String surname;
             String name;
             String patronymic;
-            Date dateOfBirth;
+            LocalDate dateOfBirth;
         }
     }
 
@@ -80,11 +82,15 @@ public enum AuthorDto {
     }
 
     private interface DateOfBirth {
-        Date getDateOfBirth();
+        LocalDate getDateOfBirth();
     }
 
     private interface Books {
         List<BookDto.Response.Slim> getBooks();
+    }
+
+    private interface Genres {
+        Set<GenreDto.Response.Slim> getGenres();
     }
 
     private interface BooksEntity {

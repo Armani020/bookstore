@@ -16,9 +16,12 @@ public interface BookRepository extends CrudRepository<Book, Long> {
 
     List<Book> findBookByNameContainingIgnoreCase(String name);
 
-    @Query("SELECT b FROM Book b " +
+    @Query("SELECT b, COUNT(b) AS cnt FROM Book b " +
             "JOIN b.genres g " +
-            "WHERE LOWER(b.name) LIKE LOWER(CONCAT('%', :name, '%')) AND g.name in :genres")
+            "WHERE (:name IS NULL OR LOWER(b.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND ((:genres) IS NULL OR g.name IN :genres) " +
+            "GROUP BY b " +
+            "ORDER BY cnt DESC")
     List<Book> findByNameAndGenres(@Param("name") String name, @Param("genres") List<String> genres);
 
     boolean existsByName(String name);

@@ -1,12 +1,15 @@
 package kz.halykacademy.bookstore.service.impl;
 
-import kz.halykacademy.bookstore.dto.BookDto.*;
+import kz.halykacademy.bookstore.dto.BookDto.Request;
+import kz.halykacademy.bookstore.dto.BookDto.Response;
 import kz.halykacademy.bookstore.entity.Author;
 import kz.halykacademy.bookstore.entity.Book;
+import kz.halykacademy.bookstore.entity.Genre;
 import kz.halykacademy.bookstore.entity.Publisher;
 import kz.halykacademy.bookstore.mapper.MapStructMapper;
 import kz.halykacademy.bookstore.repository.AuthorRepository;
 import kz.halykacademy.bookstore.repository.BookRepository;
+import kz.halykacademy.bookstore.repository.GenreRepository;
 import kz.halykacademy.bookstore.repository.PublisherRepository;
 import kz.halykacademy.bookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +24,16 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
 
     private final AuthorRepository authorRepository;
-
     private final BookRepository bookRepository;
-
+    private final GenreRepository genreRepository;
     private final PublisherRepository publisherRepository;
-
     private final MapStructMapper mapper;
 
     @Autowired
-    public BookServiceImpl(AuthorRepository authorRepository, BookRepository bookRepository, PublisherRepository publisherRepository, MapStructMapper mapper) {
+    public BookServiceImpl(AuthorRepository authorRepository, BookRepository bookRepository, GenreRepository genreRepository, PublisherRepository publisherRepository, MapStructMapper mapper) {
         this.authorRepository = authorRepository;
         this.bookRepository = bookRepository;
+        this.genreRepository = genreRepository;
         this.publisherRepository = publisherRepository;
         this.mapper = mapper;
     }
@@ -40,20 +42,20 @@ public class BookServiceImpl implements BookService {
     public Response.All save(final Request.Create request) {
         Book bookToDb = mapper.toBook(request);
         bookToDb.setAuthors(new HashSet<>());
+        bookToDb.setGenres(new HashSet<>());
         for (Request.AuthorIds authorIds : request.getAuthorIds()) {
             Author author = authorRepository.findById(authorIds.getId()).orElseThrow(
                     () -> new IllegalArgumentException("Author not found. ID: " + authorIds.getId()));
             bookToDb.addAuthor(author);
         }
+        for (Request.GenreIds genreIds : request.getGenreIds()) {
+            Genre genre = genreRepository.findById(genreIds.getId()).orElseThrow(
+                    () -> new IllegalArgumentException("Genre not found. ID: " + genreIds.getId()));
+            bookToDb.addGenre(genre);
+        }
         Publisher publisher = publisherRepository.findById(request.getPublisherId()).orElseThrow(
                 () -> new IllegalArgumentException("Publisher not found. ID: " + request.getPublisherId()));
         bookToDb.addPublisher(publisher);
-//        Book book = authorRepository.findById(authorId).map(author -> {
-//            author.addBook(bookToDb);
-//            return bookRepository.save(bookToDb);
-//        }).orElseThrow(
-//                () -> new IllegalArgumentException("Author not found. ID: " + authorId)
-//        );
         return mapper.toBookDtoResponseAll(bookRepository.save(bookToDb));
     }
 
@@ -77,12 +79,12 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Response.All> findAll(final String name, final String genres) {
-        if (genres.equals("null")) {
-            return mapper.toBookDtoResponseAll(bookRepository.findBookByNameContainingIgnoreCase(name));
+        List<String> genresList = null;
+        if (genres != null) {
+            String[] genresArray = genres.split(",");
+            genresList = new ArrayList<>();
+            Collections.addAll(genresList, genresArray);
         }
-        String[] genresArray = genres.split(",");
-        List<String> genresList = new ArrayList<>();
-        Collections.addAll(genresList, genresArray);
         return mapper.toBookDtoResponseAll(
                 bookRepository.findByNameAndGenres(name, genresList)
         );
