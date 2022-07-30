@@ -1,4 +1,4 @@
-package kz.halykacademy.bookstore.controller;
+package kz.halykacademy.bookstore.controller.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

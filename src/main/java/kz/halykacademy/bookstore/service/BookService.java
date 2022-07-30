@@ -9,13 +9,15 @@ import java.util.List;
  */
 public interface BookService {
 
-    Response.Created save(Request.Create request);
+    Response.All save(Request.Create request);
 
     Response.Slim update(Long id, Request.Update request);
 
     Response.All find(Long id);
 
-    List<Response.All> findAll(String name);
+    List<Response.All> findAll(String name, String genres);
 
-    void delete(Long id);
+    void deleteAuthorFromBook(Long bookId, Long authorId);
+
+    void delete(Long Id);
 }

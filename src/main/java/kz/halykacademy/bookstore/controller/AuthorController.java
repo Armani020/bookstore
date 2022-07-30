@@ -30,7 +30,7 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AuthorDto.Response.Slim> getAuthor(@PathVariable Long id) {
+    public ResponseEntity<AuthorDto.Response.All> getAuthor(@PathVariable Long id) {
         return new ResponseEntity<>(
                 authorService.find(id),
                 HttpStatus.OK
@@ -38,13 +38,9 @@ public class AuthorController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<AuthorDto.Response.All>> getAuthors(
-            @RequestParam(defaultValue = "") String surname,
-            @RequestParam(defaultValue = "") String name,
-            @RequestParam(defaultValue = "") String patronymic
-    ) {
+    public ResponseEntity<List<AuthorDto.Response.All>> getAuthors(@RequestParam(defaultValue = "") String fullName) {
         return new ResponseEntity<>(
-                authorService.findAll(surname, name, patronymic),
+                authorService.findAll(fullName),
                 HttpStatus.OK
         );
     }

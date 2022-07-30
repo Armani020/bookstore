@@ -1,13 +1,69 @@
 package kz.halykacademy.bookstore.dto;
 
+import kz.halykacademy.bookstore.entity.Book;
+import lombok.Data;
 import lombok.Value;
 
 import javax.validation.constraints.Positive;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public enum AuthorDto {
     ;
+
+    public enum Request {
+        ;
+
+        @Value
+        public static class Create implements Surname, Name, Patronymic, DateOfBirth {
+            String surname;
+            String name;
+            String patronymic;
+            LocalDate dateOfBirth;
+        }
+
+        @Value
+        public static class Update implements Surname, Name, Patronymic, DateOfBirth {
+            String surname;
+            String name;
+            String patronymic;
+            LocalDate dateOfBirth;
+        }
+    }
+
+    public enum Response {
+        ;
+
+        @Value
+        public static class Created implements Id, Surname, Name, Patronymic, DateOfBirth {
+            Long id;
+            String surname;
+            String name;
+            String patronymic;
+            LocalDate dateOfBirth;
+        }
+
+        @Data
+        public static class All implements Id, Surname, Name, Patronymic, DateOfBirth, Books {
+            Long id;
+            String surname;
+            String name;
+            String patronymic;
+            LocalDate dateOfBirth;
+            List<BookDto.Response.Slim> books;
+            List<GenreDto.Response.Slim> genres;
+        }
+
+        @Value
+        public static class Slim implements Id, Surname, Name, Patronymic, DateOfBirth {
+            Long id;
+            String surname;
+            String name;
+            String patronymic;
+            LocalDate dateOfBirth;
+        }
+    }
 
     private interface Id {
         @Positive Long getId();
@@ -26,62 +82,18 @@ public enum AuthorDto {
     }
 
     private interface DateOfBirth {
-        Date getDateOfBirth();
+        LocalDate getDateOfBirth();
     }
 
     private interface Books {
         List<BookDto.Response.Slim> getBooks();
     }
 
-    public enum Request {
-        ;
-
-        @Value
-        public static class Create implements Surname, Name, Patronymic, DateOfBirth {
-            String surname;
-            String name;
-            String patronymic;
-            Date dateOfBirth;
-        }
-
-        @Value
-        public static class Update implements Surname, Name, Patronymic, DateOfBirth {
-            String surname;
-            String name;
-            String patronymic;
-            Date dateOfBirth;
-        }
+    private interface Genres {
+        Set<GenreDto.Response.Slim> getGenres();
     }
 
-    public enum Response {
-        ;
-
-        @Value
-        public static class Created implements Id, Surname, Name, Patronymic, DateOfBirth {
-            Long id;
-            String surname;
-            String name;
-            String patronymic;
-            Date dateOfBirth;
-        }
-
-        @Value
-        public static class All implements Id, Surname, Name, Patronymic, DateOfBirth, Books {
-            Long id;
-            String surname;
-            String name;
-            String patronymic;
-            Date dateOfBirth;
-            List<BookDto.Response.Slim> books;
-        }
-
-        @Value
-        public static class Slim implements Id, Surname, Name, Patronymic, DateOfBirth {
-            Long id;
-            String surname;
-            String name;
-            String patronymic;
-            Date dateOfBirth;
-        }
+    private interface BooksEntity {
+        List<Book> getBooks();
     }
 }

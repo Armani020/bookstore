@@ -1,12 +1,11 @@
 package kz.halykacademy.bookstore.controller;
 
-import kz.halykacademy.bookstore.dto.AuthorDto;
 import kz.halykacademy.bookstore.dto.BookDto;
-import kz.halykacademy.bookstore.entity.Book;
 import kz.halykacademy.bookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,7 +23,7 @@ public class BookController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<BookDto.Response.Created> save(@Valid @RequestBody BookDto.Request.Create request) {
+    public ResponseEntity<BookDto.Response.All> save(@Validated @RequestBody BookDto.Request.Create request) {
         return new ResponseEntity<>(
                 bookService.save(request),
                 HttpStatus.CREATED
@@ -40,9 +39,12 @@ public class BookController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<BookDto.Response.All>> getBooks(@RequestParam(defaultValue = "") String name) {
+    public ResponseEntity<List<BookDto.Response.All>> getBooks(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String genres
+    ) {
         return new ResponseEntity<>(
-                bookService.findAll(name),
+                bookService.findAll(name, genres),
                 HttpStatus.OK
         );
     }
@@ -51,6 +53,15 @@ public class BookController {
     public ResponseEntity<BookDto.Response.Slim> updateBook(@PathVariable Long id, @Valid @RequestBody BookDto.Request.Update request) {
         return new ResponseEntity<>(
                 bookService.update(id, request),
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/{bookId}/authors/{authorId}")
+    public ResponseEntity<?> deleteAuthorsFromBook(@PathVariable Long bookId, @PathVariable Long authorId) {
+        bookService.deleteAuthorFromBook(bookId, authorId);
+        return new ResponseEntity<>(
+                "Author deleted from this book. authorId: " + authorId,
                 HttpStatus.OK
         );
     }

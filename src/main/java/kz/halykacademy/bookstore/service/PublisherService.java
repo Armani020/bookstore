@@ -1,13 +1,10 @@
 package kz.halykacademy.bookstore.service;
 
-import kz.halykacademy.bookstore.dto.AuthorDto.*;
+import kz.halykacademy.bookstore.dto.PublisherDto.*;
 
 import java.util.List;
 
-/**
- * Service for working with Author.
- */
-public interface AuthorService {
+public interface PublisherService {
 
     Response.Created save(Request.Create request);
 
@@ -15,7 +12,7 @@ public interface AuthorService {
 
     Response.All find(Long id);
 
-    List<Response.All> findAll(String fullName);
+    List<Response.All> findAll(String name);
 
     void delete(Long id);
 }
