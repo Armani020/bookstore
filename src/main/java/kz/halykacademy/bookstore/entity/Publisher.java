@@ -3,8 +3,8 @@ package kz.halykacademy.bookstore.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "publishers")
 public class Publisher {
 
     @Id
@@ -21,7 +22,7 @@ public class Publisher {
     private String name;
 
     @OneToMany(mappedBy = "publisher"/*, orphanRemoval = true*/)
-    private List<Book> books = new ArrayList<>();
+    private Set<Book> books = new HashSet<>();
 
     public void addBook(Book book) {
         this.books.add(book);

@@ -3,13 +3,14 @@ package kz.halykacademy.bookstore.controller;
 import kz.halykacademy.bookstore.dto.BookDto;
 import kz.halykacademy.bookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/book")
@@ -39,18 +40,20 @@ public class BookController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<BookDto.Response.All>> getBooks(
+    public ResponseEntity<Page<BookDto.Response.All>> getBooks(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String genres
-    ) {
+            @RequestParam(required = false) String genres,
+            Pageable pageable) {
         return new ResponseEntity<>(
-                bookService.findAll(name, genres),
+                bookService.findAll(name, genres, pageable),
                 HttpStatus.OK
         );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookDto.Response.Slim> updateBook(@PathVariable Long id, @Valid @RequestBody BookDto.Request.Update request) {
+    public ResponseEntity<BookDto.Response.Slim> updateBook(
+            @PathVariable Long id,
+            @Valid @RequestBody BookDto.Request.Update request) {
         return new ResponseEntity<>(
                 bookService.update(id, request),
                 HttpStatus.OK

@@ -1,12 +1,9 @@
 package kz.halykacademy.bookstore.entity;
 
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -17,6 +14,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "books")
 public class Book {
 
     @Id
@@ -39,6 +37,9 @@ public class Book {
 
     @ManyToMany(mappedBy = "books")
     private Set<Genre> genres = new HashSet<>();
+
+    @ManyToMany(mappedBy = "books")
+    private Set<Order> orders = new HashSet<>();
 
     public void addAuthor(Author author) {
         this.authors.add(author);
@@ -63,6 +64,19 @@ public class Book {
         if (genre != null) {
             this.genres.remove(genre);
             genre.getBooks().remove(this);
+        }
+    }
+
+    public void addOrder(Order order) {
+        this.orders.add(order);
+        order.getBooks().add(this);
+    }
+
+    public void removeOrder(Long orderId) {
+        Order order = this.orders.stream().filter(b -> b.getId().equals(orderId)).findFirst().orElse(null);
+        if (order != null) {
+            this.orders.remove(order);
+            order.getBooks().remove(this);
         }
     }
 

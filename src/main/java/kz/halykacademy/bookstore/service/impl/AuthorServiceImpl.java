@@ -9,8 +9,13 @@ import kz.halykacademy.bookstore.repository.AuthorRepository;
 import kz.halykacademy.bookstore.repository.GenreRepository;
 import kz.halykacademy.bookstore.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -72,13 +77,14 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<Response.All> findAll(final String fullName) {
-        List<AuthorDto.Response.All> authorsFromDb = mapper.toAuthorDtoResponseAll(
-                authorRepository.findByFullName(fullName));
-        for (AuthorDto.Response.All a : authorsFromDb) {
+    public Page<Response.All> findAll(final String fullName, final String genres, final Pageable pageable) {
+        Page<Author> authorsPage = authorRepository.findByFullName(fullName, parseGenres(genres), pageable);
+        Page<Response.All> authorsDtoPage = new PageImpl<>(
+                mapper.toAuthorDtoResponseAll(authorsPage.getContent()), pageable, authorsPage.getTotalElements());
+        for (AuthorDto.Response.All a : authorsDtoPage) {
             a.setGenres(mapper.toGenreDtoResponseSlim(genreRepository.findGenresByAuthor(a.getId())));
         }
-        return authorsFromDb;
+        return authorsDtoPage;
     }
 
     @Override
@@ -87,5 +93,15 @@ public class AuthorServiceImpl implements AuthorService {
             throw new IllegalArgumentException("Author doesn't exists. ID: " + id);
         }
         authorRepository.deleteById(id);
+    }
+
+    private List<String> parseGenres(String genres) {
+        List<String> genresList = null;
+        if (genres != null) {
+            String[] genresArray = genres.split(",");
+            genresList = new ArrayList<>();
+            Collections.addAll(genresList, genresArray);
+        }
+        return genresList;
     }
 }
