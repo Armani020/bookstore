@@ -3,7 +3,7 @@ package kz.halykacademy.bookstore.dto;
 import lombok.Value;
 
 import javax.validation.constraints.Positive;
-import java.util.Set;
+import java.util.List;
 
 public enum PublisherDto {
     ;
@@ -57,7 +57,7 @@ public enum PublisherDto {
         public static class All implements Id, Name, Books {
             Long id;
             String name;
-            Set<BookDto.Response.Slim> books;
+            List<BookDto.Response.Slim> books;
         }
 
         @Value
@@ -76,6 +76,6 @@ public enum PublisherDto {
     }
 
     private interface Books {
-        Set<BookDto.Response.Slim> getBooks();
+        List<BookDto.Response.Slim> getBooks();
     }
 }

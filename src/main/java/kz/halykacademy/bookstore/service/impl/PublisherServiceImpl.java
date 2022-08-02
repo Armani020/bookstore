@@ -1,7 +1,7 @@
 package kz.halykacademy.bookstore.service.impl;
 
-import kz.halykacademy.bookstore.dto.PublisherDto;
-import kz.halykacademy.bookstore.dto.PublisherDto.*;
+import kz.halykacademy.bookstore.dto.PublisherDto.Request;
+import kz.halykacademy.bookstore.dto.PublisherDto.Response;
 import kz.halykacademy.bookstore.entity.Publisher;
 import kz.halykacademy.bookstore.mapper.MapStructMapper;
 import kz.halykacademy.bookstore.repository.PublisherRepository;
@@ -9,7 +9,6 @@ import kz.halykacademy.bookstore.service.PublisherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class PublisherServiceImpl implements PublisherService {
             throw new IllegalArgumentException("Publisher already exists. name: " + request.getName());
         }
         Publisher publisher = mapper.toPublisher(request);
-        publisher.setBooks(new ArrayList<>());
+        publisher.setBooks(new HashSet<>());
         return mapper.toPublisherDtoResponseCreated(
                 publisherRepository.save(publisher)
         );

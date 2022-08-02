@@ -1,10 +1,14 @@
 package kz.halykacademy.bookstore.entity;
 
+import kz.halykacademy.bookstore.entity.enums.OrderStatus;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -12,41 +16,44 @@ import java.util.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "authors")
-public class Author {
+@Table(name = "orders")
+public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String surname;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
-    private String name;
-
-    private String patronymic;
-
-    private LocalDate dateOfBirth;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @ManyToMany(cascade = {
             CascadeType.MERGE,
             CascadeType.PERSIST
     })
     @JoinTable(
-            name = "author_book",
-            joinColumns = @JoinColumn(name = "author_id"),
+            name = "order_book",
+            joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id")
     )
     private Set<Book> books = new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
+
     public void addBook(Book book) {
         this.books.add(book);
-        book.getAuthors().add(this);
+        book.getOrders().add(this);
     }
 
     public void removeBook(Long bookId) {
         Book book = this.books.stream().filter(b -> b.getId().equals(bookId)).findFirst().orElse(null);
         if (book != null) {
             this.books.remove(book);
-            book.getAuthors().remove(this);
+            book.getOrders().remove(this);
         }
     }
 
@@ -54,8 +61,8 @@ public class Author {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Author author = (Author) o;
-        return Objects.equals(id, author.id);
+        Order order = (Order) o;
+        return Objects.equals(id, order.id);
     }
 
     @Override

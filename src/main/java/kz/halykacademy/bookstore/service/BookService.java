@@ -1,8 +1,9 @@
 package kz.halykacademy.bookstore.service;
 
-import kz.halykacademy.bookstore.dto.BookDto.*;
-
-import java.util.List;
+import kz.halykacademy.bookstore.dto.BookDto.Request;
+import kz.halykacademy.bookstore.dto.BookDto.Response;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service for working with Book.
@@ -15,7 +16,7 @@ public interface BookService {
 
     Response.All find(Long id);
 
-    List<Response.All> findAll(String name, String genres);
+    Page<Response.All> findAll(String name, String genres, Pageable pageable);
 
     void deleteAuthorFromBook(Long bookId, Long authorId);
 

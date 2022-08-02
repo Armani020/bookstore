@@ -13,6 +13,9 @@ import kz.halykacademy.bookstore.repository.GenreRepository;
 import kz.halykacademy.bookstore.repository.PublisherRepository;
 import kz.halykacademy.bookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,6 +46,7 @@ public class BookServiceImpl implements BookService {
         Book bookToDb = mapper.toBook(request);
         bookToDb.setAuthors(new HashSet<>());
         bookToDb.setGenres(new HashSet<>());
+        bookToDb.setOrders(new HashSet<>());
         for (Request.AuthorIds authorIds : request.getAuthorIds()) {
             Author author = authorRepository.findById(authorIds.getId()).orElseThrow(
                     () -> new IllegalArgumentException("Author not found. ID: " + authorIds.getId()));
@@ -78,15 +82,10 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<Response.All> findAll(final String name, final String genres) {
-        List<String> genresList = null;
-        if (genres != null) {
-            String[] genresArray = genres.split(",");
-            genresList = new ArrayList<>();
-            Collections.addAll(genresList, genresArray);
-        }
-        return mapper.toBookDtoResponseAll(
-                bookRepository.findByNameAndGenres(name, genresList)
+    public Page<Response.All> findAll(final String name, final String genres, final Pageable pageable) {
+        Page<Book> booksPage = bookRepository.findByNameAndGenres(name, parseGenres(genres), pageable);
+        return new PageImpl<>(
+                mapper.toBookDtoResponseAll(booksPage.getContent()), pageable, booksPage.getTotalElements()
         );
     }
 
@@ -110,5 +109,15 @@ public class BookServiceImpl implements BookService {
         }
         bookRepository.save(book);
         bookRepository.deleteById(id);
+    }
+
+    private List<String> parseGenres(String genres) {
+        List<String> genresList = null;
+        if (genres != null) {
+            String[] genresArray = genres.split(",");
+            genresList = new ArrayList<>();
+            Collections.addAll(genresList, genresArray);
+        }
+        return genresList;
     }
 }
