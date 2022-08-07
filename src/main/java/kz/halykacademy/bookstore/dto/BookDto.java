@@ -1,6 +1,6 @@
 package kz.halykacademy.bookstore.dto;
 
-import lombok.NoArgsConstructor;
+import lombok.Data;
 import lombok.Value;
 
 import javax.validation.constraints.NotBlank;
@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 public enum BookDto {
     ;
@@ -16,14 +15,14 @@ public enum BookDto {
     public enum Request {
         ;
 
-        @Value
+        @Data
         public static class Create implements Price, Name, NumberOfPages, ReleaseYear, AuthorIdList, GenreIdList, PublisherId {
             Integer price;
             String name;
             Integer numberOfPages;
             LocalDate releaseYear;
-            List<AuthorIds> authorIds;
-            List<GenreIds> genreIds;
+            List<Long> authorIdList;
+            List<Long> genreIdList;
             Long publisherId;
         }
 
@@ -35,24 +34,14 @@ public enum BookDto {
             LocalDate releaseYear;
         }
 
-        @NoArgsConstructor
+        @Data
         public static class AuthorIds implements Id {
             Long id;
-
-            @Override
-            public Long getId() {
-                return this.id;
-            }
         }
 
-        @NoArgsConstructor
+        @Data
         public static class GenreIds implements Id {
             Long id;
-
-            @Override
-            public Long getId() {
-                return this.id;
-            }
         }
 
     }
@@ -60,7 +49,7 @@ public enum BookDto {
     public enum Response {
         ;
 
-        @Value
+        @Data
         public static class Created implements Id, Price, Name, NumberOfPages, ReleaseYear {
             Long id;
             Integer price;
@@ -69,19 +58,19 @@ public enum BookDto {
             LocalDate releaseYear;
         }
 
-        @Value
+        @Data
         public static class All implements Id, Price, Name, NumberOfPages, ReleaseYear, Authors, Genres, Publisher {
             Long id;
             Integer price;
             String name;
             Integer numberOfPages;
             LocalDate releaseYear;
-            Set<AuthorDto.Response.Slim> authors;
-            Set<GenreDto.Response.Slim> genres;
+            List<AuthorDto.Response.Slim> authors;
+            List<GenreDto.Response.Slim> genres;
             PublisherDto.Response.Slim publisher;
         }
 
-        @Value
+        @Data
         public static class Slim implements Id, Name {
             Long id;
             String name;
@@ -109,19 +98,19 @@ public enum BookDto {
     }
 
     private interface Authors {
-        Set<AuthorDto.Response.Slim> getAuthors();
+        List<AuthorDto.Response.Slim> getAuthors();
     }
 
     private interface AuthorIdList {
-        @NotNull List<Request.AuthorIds> getAuthorIds();
+        @NotNull List<Long> getAuthorIdList();
     }
 
     private interface Genres {
-        Set<GenreDto.Response.Slim> getGenres();
+        List<GenreDto.Response.Slim> getGenres();
     }
 
     private interface GenreIdList {
-        @NotNull List<Request.GenreIds> getGenreIds();
+        @NotNull List<Long> getGenreIdList();
     }
 
     private interface Publisher {

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -41,7 +40,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public Response.Created save(final Request.Create request) {
         Author author = mapper.toAuthor(request);
-        author.setBooks(new HashSet<>());
+//        author.setBooks(new HashSet<>());
         if (authorRepository.existsBySurnameAndNameAndPatronymicAndDateOfBirth(
                 author.getSurname(),
                 author.getName(),
@@ -58,8 +57,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public Response.Slim update(final Long id, final Request.Update request) {
         Author authorFromDb = authorRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("Author not found. id: " + id)
-        );
+                () -> new IllegalArgumentException("Author not found. id: " + id));
         authorFromDb.setName(request.getName());
         authorFromDb.setSurname(request.getSurname());
         authorFromDb.setPatronymic(request.getPatronymic());

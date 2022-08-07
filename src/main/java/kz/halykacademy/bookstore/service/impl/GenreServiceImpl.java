@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * Genre service.
+ */
 @Service
 public class GenreServiceImpl implements GenreService {
 
