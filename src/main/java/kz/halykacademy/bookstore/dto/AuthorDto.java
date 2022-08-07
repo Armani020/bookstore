@@ -55,7 +55,7 @@ public enum AuthorDto {
             List<GenreDto.Response.Slim> genres;
         }
 
-        @Value
+        @Data
         public static class Slim implements Id, Surname, Name, Patronymic, DateOfBirth {
             Long id;
             String surname;

@@ -4,6 +4,9 @@ import kz.halykacademy.bookstore.dto.PublisherDto.*;
 
 import java.util.List;
 
+/**
+ * Service for working with Publisher.
+ */
 public interface PublisherService {
 
     Response.Created save(Request.Create request);

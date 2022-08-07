@@ -1,9 +1,10 @@
 package kz.halykacademy.bookstore.dto;
 
+import lombok.Data;
 import lombok.Value;
 
 import javax.validation.constraints.Positive;
-import java.util.Set;
+import java.util.List;
 
 public enum GenreDto {
     ;
@@ -11,36 +12,14 @@ public enum GenreDto {
     public enum Request {
         ;
 
+        @Data
         public static class Create implements Name {
             String name;
-
-            public Create(String name) {
-                this.name = name;
-            }
-
-            public Create() {
-            }
-
-            @Override
-            public String getName() {
-                return this.name;
-            }
         }
 
+        @Data
         public static class Update implements Name {
             String name;
-
-            public Update(String name) {
-                this.name = name;
-            }
-
-            public Update() {
-            }
-
-            @Override
-            public String getName() {
-                return this.name;
-            }
         }
     }
 
@@ -57,10 +36,10 @@ public enum GenreDto {
         public static class All implements Id, Name, Books {
             Long id;
             String name;
-            Set<BookDto.Response.Slim> books;
+            List<BookDto.Response.Slim> books;
         }
 
-        @Value
+        @Data
         public static class Slim implements Id, Name {
             Long id;
             String name;
@@ -76,6 +55,6 @@ public enum GenreDto {
     }
 
     private interface Books {
-        Set<BookDto.Response.Slim> getBooks();
+        List<BookDto.Response.Slim> getBooks();
     }
 }

@@ -1,15 +1,15 @@
 package kz.halykacademy.bookstore.mapper;
 
 import kz.halykacademy.bookstore.dto.AuthorDto;
-import kz.halykacademy.bookstore.dto.BookDto;
 import kz.halykacademy.bookstore.dto.GenreDto;
 import kz.halykacademy.bookstore.dto.PublisherDto;
 import kz.halykacademy.bookstore.entity.Author;
-import kz.halykacademy.bookstore.entity.Book;
 import kz.halykacademy.bookstore.entity.Genre;
 import kz.halykacademy.bookstore.entity.Publisher;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
+import org.mapstruct.NullValueMappingStrategy;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
@@ -18,7 +18,9 @@ import java.util.List;
  */
 @Mapper(
         componentModel = "spring",
-        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+        nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT
 )
 public interface MapStructMapper {
 
@@ -35,20 +37,6 @@ public interface MapStructMapper {
     Author toAuthor(AuthorDto.Request.Create authorDto);
 
     Author toAuthor(AuthorDto.Request.Update authorDto);
-
-    BookDto.Response.Created toBookDtoResponseCreated(Book book);
-
-    BookDto.Response.Slim toBookDtoResponseSlim(Book book);
-
-    BookDto.Response.All toBookDtoResponseAll(Book book);
-
-    List<BookDto.Response.Slim> toBookDtoResponseSlim(List<Book> books);
-
-    List<BookDto.Response.All> toBookDtoResponseAll(List<Book> books);
-
-    Book toBook(BookDto.Request.Create bookDto);
-
-    Book toBook(BookDto.Request.Update bookDto);
 
     PublisherDto.Response.Created toPublisherDtoResponseCreated(Publisher publisher);
 
