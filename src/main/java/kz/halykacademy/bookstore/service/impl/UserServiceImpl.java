@@ -1,11 +1,49 @@
 package kz.halykacademy.bookstore.service.impl;
 
+import kz.halykacademy.bookstore.dto.UserDto;
+import kz.halykacademy.bookstore.repository.UserRepository;
 import kz.halykacademy.bookstore.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * User service.
  */
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDto.Response.Created save(UserDto.Request.Create request) {
+        if (userRepository.existsByLogin(request.getLogin())) {
+            throw new IllegalArgumentException("This login already in use! Login: " + request.getLogin());
+        }
+        return null;
+    }
+
+    @Override
+    public UserDto.Response.Slim update(Long id, UserDto.Request.Update request) {
+        return null;
+    }
+
+    @Override
+    public UserDto.Response.All find(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<UserDto.Response.All> findAll(String name) {
+        return null;
+    }
+
+    @Override
+    public void delete(Long id) {
+
+    }
 }
