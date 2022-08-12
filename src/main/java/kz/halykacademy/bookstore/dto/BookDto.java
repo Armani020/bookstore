@@ -33,17 +33,6 @@ public enum BookDto {
             Integer numberOfPages;
             LocalDate releaseYear;
         }
-
-        @Data
-        public static class AuthorIds implements Id {
-            Long id;
-        }
-
-        @Data
-        public static class GenreIds implements Id {
-            Long id;
-        }
-
     }
 
     public enum Response {
