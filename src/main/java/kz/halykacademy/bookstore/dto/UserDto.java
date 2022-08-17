@@ -24,6 +24,11 @@ public enum UserDto {
             String login;
             String password;
         }
+
+        @Data
+        public static class UpdateStatus implements Status {
+            String status;
+        }
     }
 
     public enum Response {

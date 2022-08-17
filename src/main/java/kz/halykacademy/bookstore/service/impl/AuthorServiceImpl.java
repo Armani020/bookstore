@@ -8,7 +8,7 @@ import kz.halykacademy.bookstore.mapper.MapStructMapper;
 import kz.halykacademy.bookstore.repository.AuthorRepository;
 import kz.halykacademy.bookstore.repository.GenreRepository;
 import kz.halykacademy.bookstore.service.AuthorService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +22,7 @@ import java.util.List;
  * Author service.
  */
 @Service
+@RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
@@ -29,13 +30,6 @@ public class AuthorServiceImpl implements AuthorService {
     private final GenreRepository genreRepository;
 
     private final MapStructMapper mapper;
-
-    @Autowired
-    public AuthorServiceImpl(AuthorRepository authorRepository, GenreRepository genreRepository, MapStructMapper mapper) {
-        this.authorRepository = authorRepository;
-        this.genreRepository = genreRepository;
-        this.mapper = mapper;
-    }
 
     @Override
     public Response.Created save(final Request.Create request) {

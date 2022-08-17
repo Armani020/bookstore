@@ -2,7 +2,7 @@ package kz.halykacademy.bookstore.controller;
 
 import kz.halykacademy.bookstore.dto.AuthorDto;
 import kz.halykacademy.bookstore.service.AuthorService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -12,15 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/author")
 public class AuthorController {
 
     private final AuthorService authorService;
-
-    @Autowired
-    public AuthorController(AuthorService authorService) {
-        this.authorService = authorService;
-    }
 
     @PostMapping("/")
     public ResponseEntity<AuthorDto.Response.Created> createAuthor(@Valid @RequestBody AuthorDto.Request.Create request) {

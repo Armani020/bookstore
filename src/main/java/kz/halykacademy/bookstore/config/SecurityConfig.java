@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.http.HttpMethod.GET;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -33,10 +35,12 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests(
                         authz -> authz
-                                .antMatchers("/api/auth/login", "/api/auth/login", "/api/user/").permitAll()
-                                .anyRequest().authenticated()
+                                .antMatchers("/api/auth/login", "/api/auth/token", "/api/user/register").permitAll()
+                                .antMatchers(GET, "/api/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                                .antMatchers("/api/order/").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                                .anyRequest().hasAnyAuthority("ROLE_ADMIN")
                                 .and()
-                                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                                .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 ).build();
     }
 }

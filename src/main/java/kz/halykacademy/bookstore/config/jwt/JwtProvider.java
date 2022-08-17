@@ -1,6 +1,7 @@
 package kz.halykacademy.bookstore.config.jwt;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import kz.halykacademy.bookstore.entity.User;
@@ -41,6 +42,7 @@ public class JwtProvider {
                 .signWith(jwtAccessSecret)
                 .claim("roles", user.getRoles())
                 .claim("login", user.getLogin())
+                .claim("status", user.getStatus())
                 .compact();
     }
 
@@ -70,18 +72,10 @@ public class JwtProvider {
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } catch (ExpiredJwtException expEx) {
-            //throw new IllegalArgumentException("Token is expired!");
-            log.error("Token expired", expEx);
-        } catch (UnsupportedJwtException unsEx) {
-            log.error("Unsupported jwt", unsEx);
-        } catch (MalformedJwtException mjEx) {
-            log.error("Malformed jwt", mjEx);
         } catch (Exception e) {
-            //throw new IllegalArgumentException("Invalid token!");
-            log.error("invalid token", e);
+            return false;
         }
-        return false;
+//        return false;
     }
 
     public Claims getAccessClaims(@NonNull String token) {

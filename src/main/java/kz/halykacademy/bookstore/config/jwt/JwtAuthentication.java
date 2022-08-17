@@ -1,13 +1,11 @@
 package kz.halykacademy.bookstore.config.jwt;
 
-import kz.halykacademy.bookstore.entity.Role;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -16,6 +14,7 @@ public class JwtAuthentication implements Authentication {
     private boolean authenticated;
     private String username;
     private String login;
+    private String status;
     private Collection<? extends GrantedAuthority> roles;
 
     @Override

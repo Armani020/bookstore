@@ -16,6 +16,7 @@ public class AuthorMapperImpl {
         if (author.getSurname() != null) slim.setSurname(author.getSurname());
         if (author.getName() != null) slim.setName(author.getName());
         if (author.getPatronymic() != null) slim.setPatronymic(author.getPatronymic());
+        if (author.getDateOfBirth() != null) slim.setDateOfBirth(author.getDateOfBirth());
         return slim;
     }
 }

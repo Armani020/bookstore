@@ -3,10 +3,10 @@ package kz.halykacademy.bookstore.service.impl;
 import io.jsonwebtoken.Claims;
 import kz.halykacademy.bookstore.config.jwt.JwtAuthentication;
 import kz.halykacademy.bookstore.config.jwt.JwtProvider;
-import kz.halykacademy.bookstore.dto.TokenDto;
+import kz.halykacademy.bookstore.dto.TokenDto.*;
 import kz.halykacademy.bookstore.entity.User;
+import kz.halykacademy.bookstore.entity.enums.AccountStatus;
 import kz.halykacademy.bookstore.repository.UserRepository;
-import kz.halykacademy.bookstore.service.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,26 +20,28 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserService userService;
     private final Map<String, String> refreshStorage = new HashMap<>();
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    public TokenDto.Response.TokenResponse login(@NonNull TokenDto.Request.LoginRequest authRequest) {
+    public Response.TokenResponse login(@NonNull Request.LoginRequest authRequest) {
         final User user = userRepository.findByLogin(authRequest.getLogin())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if (user.getStatus().equals(AccountStatus.DISABLED)) {
+            throw new IllegalArgumentException("Account is disabled!");
+        }
         if (passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
             final String accessToken = jwtProvider.generateAccessToken(user);
             final String refreshToken = jwtProvider.generateRefreshToken(user);
             refreshStorage.put(user.getLogin(), refreshToken);
-            return new TokenDto.Response.TokenResponse(accessToken, refreshToken);
+            return new Response.TokenResponse(accessToken, refreshToken);
         } else {
             throw new IllegalArgumentException("Wrong auth data!");
         }
     }
 
-    public TokenDto.Response.TokenResponse getAccessToken(@NonNull String refreshToken) {
+    public Response.TokenResponse getAccessToken(@NonNull String refreshToken) {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
             final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
             final String login = claims.getSubject();
@@ -48,13 +50,13 @@ public class AuthService {
                 final User user = userRepository.findByLogin(login)
                         .orElseThrow(() -> new IllegalArgumentException("User not found! Login: " + login));
                 final String accessToken = jwtProvider.generateAccessToken(user);
-                return new TokenDto.Response.TokenResponse(accessToken, refreshToken);
+                return new Response.TokenResponse(accessToken, null);
             }
         }
-        return new TokenDto.Response.TokenResponse(null, null);
+        return new Response.TokenResponse(null, null);
     }
 
-    public TokenDto.Response.TokenResponse refresh(@NonNull String refreshToken) {
+    public Response.TokenResponse refresh(@NonNull String refreshToken) {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
             final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
             final String login = claims.getSubject();
@@ -65,7 +67,7 @@ public class AuthService {
                 final String accessToken = jwtProvider.generateAccessToken(user);
                 final String newRefreshToken = jwtProvider.generateRefreshToken(user);
                 refreshStorage.put(user.getLogin(), newRefreshToken);
-                return new TokenDto.Response.TokenResponse(accessToken, newRefreshToken);
+                return new Response.TokenResponse(accessToken, newRefreshToken);
             }
         }
         throw new IllegalArgumentException("Invalid token!");

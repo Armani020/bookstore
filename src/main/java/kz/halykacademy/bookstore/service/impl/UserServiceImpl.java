@@ -1,17 +1,18 @@
 package kz.halykacademy.bookstore.service.impl;
 
 import kz.halykacademy.bookstore.dto.UserDto;
-import kz.halykacademy.bookstore.entity.Role;
 import kz.halykacademy.bookstore.entity.User;
+import kz.halykacademy.bookstore.entity.enums.AccountStatus;
 import kz.halykacademy.bookstore.mapper.UserMapperImpl;
 import kz.halykacademy.bookstore.repository.RoleRepository;
 import kz.halykacademy.bookstore.repository.UserRepository;
 import kz.halykacademy.bookstore.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * User service.
@@ -37,22 +38,42 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto.Response.Slim update(Long id, UserDto.Request.Update request) {
-        return null;
+    public UserDto.Response.Slim update(final Long id, final UserDto.Request.Update request) {
+        User userFromDb = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("User not found. id: " + id));
+        userFromDb.setLogin(request.getLogin());
+        userFromDb.setPassword(passwordEncoder.encode(request.getPassword()));
+        return userMapper.toDtoResponseSlim(userRepository.save(userFromDb));
     }
 
     @Override
-    public UserDto.Response.All find(Long id) {
-        return null;
+    public UserDto.Response.Slim updateStatus(Long id, UserDto.Request.UpdateStatus request) {
+        User userFromDb = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("User not found"));
+        userFromDb.setStatus(AccountStatus.valueOf(request.getStatus()));
+        return userMapper.toDtoResponseSlim(userRepository.save(userFromDb));
     }
 
     @Override
-    public List<UserDto.Response.All> findAll(String name) {
-        return null;
+    public UserDto.Response.All find(final Long id) {
+        User userFromDb = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("User not found. id: " + id));
+        return userMapper.toDtoResponseAll(userFromDb);
     }
 
     @Override
-    public void delete(Long id) {
+    public Page<UserDto.Response.Slim> findAll(final String login, final Pageable pageable) {
+        Page<User> usersPage = userRepository.findUsersByLogin(login, pageable);
+        Page<UserDto.Response.Slim> usersDtoPage = new PageImpl<>(
+                userMapper.toDtoResponseSlim(usersPage.getContent()), pageable, usersPage.getTotalElements());
+        return usersDtoPage;
+    }
 
+    @Override
+    public void delete(final Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("User doesn't exists. ID: " + id);
+        }
+        userRepository.deleteById(id);
     }
 }

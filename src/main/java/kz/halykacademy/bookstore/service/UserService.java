@@ -1,8 +1,8 @@
 package kz.halykacademy.bookstore.service;
 
 import kz.halykacademy.bookstore.dto.UserDto.*;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service for working with User.
@@ -13,9 +13,11 @@ public interface UserService {
 
     Response.Slim update(Long id, Request.Update request);
 
+    Response.Slim updateStatus(Long id, Request.UpdateStatus request);
+
     Response.All find(Long id);
 
-    List<Response.All> findAll(String name);
+    Page<Response.Slim> findAll(String name, Pageable pageable);
 
     void delete(Long id);
 }

@@ -20,7 +20,12 @@ public enum OrderDto {
         }
 
         @Data
-        public static class Update implements Status {
+        public static class Update implements BookIdList {
+            List<Long> bookIdList;
+        }
+
+        @Data
+        public static class UpdateStatus implements Status {
             String status;
         }
     }
